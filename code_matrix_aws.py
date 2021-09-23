@@ -1,6 +1,7 @@
 import time
 import json
 import board
+import microcontroller
 import busio
 from digitalio import DigitalInOut
 import displayio
@@ -281,8 +282,9 @@ aws_iot.connect()
 
 while True:
     try:
-        aws_iot.loop()
-    except (ValueError, RuntimeError, MQTT.MMQTTException) as e:
+        #aws_iot.loop()
+        aws_iot.client.loop(0.1)
+    except (ValueError, RuntimeError, MQTT.MMQTTException, AttributeError) as e:
         print("Failed to get data, retrying\n", e)
         try:
             print("wifi.reset")
@@ -291,8 +293,32 @@ while True:
             wifi.connect()
             print("aws_iot.reconnect()")
             aws_iot.reconnect()
+            """
+            Still network error... keep trying.
+            ESP32 not responding
+            Failed to get data, retrying
+            MiniMQTT is not connected.
+            wifi.reset
+            wifi.connect
+            aws_iot.reconnect()
+            Still network error... keep trying.
+            ESP32 not responding
+            Failed to get data, retrying
+            MiniMQTT is not connected.
+            wifi.reset
+            wifi.connect
+            aws_iot.reconnect()
+            Still network error... keep trying.
+            ESP32 not responding
+            Failed to get data, retrying
+            MiniMQTT is not connected.
+            wifi.reset
+            wifi.connect
+            aws_iot.reconnect()
+            """
         except Exception as e:
-            print("Still network error... keep trying.")
+            print("Still network error... Going to reset.")
             print(e)
+            microcontroller.reset() 
         continue
 
